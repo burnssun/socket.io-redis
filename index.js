@@ -90,7 +90,7 @@ function adapter(uri, opts){
    */
 
   Redis.prototype.onmessage = function(channel, msg){
-    var args = msgpack.decode(msg);
+    var args = msgpack.unpack(msg);
     var packet;
 
     if (uid == args.shift()) return debug('ignore same uid');
@@ -125,12 +125,12 @@ function adapter(uri, opts){
       if (opts.rooms) {
         opts.rooms.forEach(function(room) {
           var chn = prefix + '#' + packet.nsp + '#' + room + '#';
-          var msg = msgpack.encode([uid, packet, opts]);
+          var msg = msgpack.pack([uid, packet, opts]);
           pub.publish(chn, msg);
         });
       } else {
         var chn = prefix + '#' + packet.nsp + '#';
-        var msg = msgpack.encode([uid, packet, opts]);
+        var msg = msgpack.pack([uid, packet, opts]);
         pub.publish(chn, msg);
       }
     }
